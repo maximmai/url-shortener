@@ -1,17 +1,41 @@
 const express = require('express');
-const redisClient = require('./redis');
+const RedisClient = require('./redis');
+const { URL, parse } = require('url');
+
+const sanitize = (url, protocols) => {
+    try {
+        new URL(url);
+        const parsed = parse(url);
+        return protocols
+            ? parsed.protocol
+                ? protocols.map(x => `${x.toLowerCase()}:`).includes(parsed.protocol)
+                : false
+            : true;
+    } catch (err) {
+        return false;
+    }
+}
 
 const main = async () => {
     const app = express();
     const port = 3000;
 
-    app.get('/:hashed', (req, res) => {
-        res.send(redisClient.get(req.params.hashed));
+    app.get('/:hashed', async (req, res) => {
+        const result = await RedisClient.get('abc');
+        const response = result ? result : null;
+        res.redirect(`https://google.ca?redirect=${response}`);
     });
 
     app.post('/url/shorten', (req, res) => {
         const hashed = + new Date();
-        res.send(redisClient.set(req.params.hashed, req.body.url));
+        const originalUrl = req.body.url;
+        const sanitized = sanitize(originalUrl, ["https", "http"]);
+        if (sanitized) {
+            res.send(RedisClient.set(hashed, originalUrl));
+        } else{
+            res.send(null);
+        }
+
     });
 
     app.listen(port, () => {
@@ -24,5 +48,6 @@ const main = async () => {
         await main();
     } catch (e) {
         // Deal with the fact the chain failed
+        console.error(e);
     }
 })();

@@ -1,12 +1,19 @@
-const redis = require('redis');
+const Redis = require("ioredis");
+const dotenv = require('dotenv');
+dotenv.config();
+const port = process.env.REDIS_PORT;
+const password = process.env.REDIS_PASSWORD;
+const hosts = process.env.REDIS_HOSTS.split(",");
 
-const RedisClient = (function() {
-    return redis.createClient({
-        host: '192.168.2.231',
-        port: 6379,
-        password: 'new2you!'
-    });
+const configs = hosts.map(host => {
+    return {
+        username: 'default',
+        password: password,
+        port: port,
+        host: host,
+    }
+});
 
-})();
+const RedisClient = new Redis.Cluster(configs);
 
 module.exports = RedisClient
