@@ -4,6 +4,23 @@ A simple implementation of a popular system design interview question
 ## Design
 ![image](https://user-images.githubusercontent.com/506983/147329301-5020415d-4485-4b33-905c-ec1a1bb2cc49.png)
 
+## Development
+
+### Configure the runtime variables
+Copy the `.env.example` to `.env`, and update the contents:
+```shell
+BASE_URL="http://localhost:3000"
+APP_PORT=3000
+REDIS_PORT=<RedisPORT>
+REDIS_PASSWORD=<RedisPassword>
+REDIS_HOSTS="<RedisClusterIPs>"
+```
+### Running the application
+```shell
+npm install
+npm start
+```
+
 ## APIs 
 
 ### Create an URL
