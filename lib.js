@@ -1,6 +1,10 @@
 const {parse, URL} = require("url");
 const shortid = require('shortid');
 
+const validateHash = (id) => {
+    return shortid.isValid(id);
+};
+
 /**
  *
  * @param url
@@ -32,6 +36,7 @@ const sanitize = (url, protocols) => {
 }
 
 module.exports = {
+    validateHash,
     hash,
     sanitize
 }
