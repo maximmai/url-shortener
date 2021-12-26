@@ -21,9 +21,11 @@
   },
   "homepage": "https://github.com/maximmai/url-shortener#readme",
   "dependencies": {
+    "body-parser": "^1.19.1",
     "express": "^4.17.2",
     "ioredis": "^4.28.2",
-    "redis": "^4.0.1"
+    "redis": "^4.0.1",
+    "shortid": "^2.2.16"
   },
   "devDependencies": {
     "dotenv": "^10.0.0"
