@@ -4,7 +4,7 @@ dotenv.config();
 
 const bodyParser = require('body-parser');
 const RedisClient = require('./redis');
-const {hash, sanitize, validateHash} = require('./lib');
+const {hash, sanitize, validateHash, rateLimiter} = require('./lib');
 
 const APP_PORT = process.env.APP_PORT;
 const BASE_URL = process.env.BASE_URL;
@@ -14,6 +14,12 @@ const main = async () => {
     const app = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
+
+    app.use(rateLimiter({
+        tokensPerInterval: 1,
+        interval: 2000,        // Add 1 token every 2 seconds
+        bucketSize: 5          // Max burst of 5
+    }));
 
     app.get('/:hashed', async (req, res) => {
         if (!validateHash(req.params.hashed)) {
@@ -43,6 +49,10 @@ const main = async () => {
             res.status(400).send(null);
         }
 
+    });
+
+    app.get('/ping', (req, res) => {
+        res.send('Request accepted!');
     });
 
     app.listen(APP_PORT, () => {
